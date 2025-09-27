@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8">
+    <title>Геокодер</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&apikey={{ config['YANDEX_API_KEY'] }}" type="text/javascript"></script>
+  </head>
+  <body>
+    <header>
+      <img src="{{ url_for('static', filename='logo.png') }}" alt="Логотип">
+      <h1>Геокодер</h1>
+    </header>
+
+    <main>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="flash-container">
+            {% for category, message in messages %}
+              <div class="flash {{ category }}">
+                {{ message }}
+                <button class="close" onclick="this.parentElement.style.display='none';">&times;</button>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      <form method="POST" class="input-group">
+        <input type="text" name="address" placeholder="Введите адрес" value="{{ address }}" id="addressInput">
+        {% if edit_id %}
+          <input type="hidden" name="edit_id" value="{{ edit_id }}">
+          <button type="submit" class="btn-success">Изменить</button>
+          <a href="{{ url_for('index') }}" class="btn-secondary">Отмена</a>
+        {% else %}
+          <button type="submit" class="btn-success">Добавить</button>
+        {% endif %}
+      </form>
+
+      {% if coords %}
+        <div id="map" data-coords="{{ coords[0] }},{{ coords[1] }}"></div>
+      {% endif %}
+
+      <h3>История</h3>
+      <ul>
+        {% for entry in history %}
+          <li>
+            {{ entry.address }}
+            <a href="{{ url_for('index', edit_id=entry.id) }}" class="btn-edit">Редактировать</a>
+          </li>
+        {% endfor %}
+      </ul>
+    </main>
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 Геокодер. Все права защищены.</p>
+                <div class="footer-right">
+                  <p>Разработчики: Темергалеев Никита</p>
+                  <p>Email: <a href="mailto:mr.wonderwol@mail.ru">mr.wonderwol@mail.ru</a></p>
+                  <p>Telegram: <a href="https://t.me/Wonderwol" target="_blank">@Wonderwol</a></p>
+                </div>
+        </div>
+    </footer>
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+  </body>
+</html>
